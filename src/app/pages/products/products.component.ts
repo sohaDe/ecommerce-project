@@ -32,6 +32,12 @@ export class ProductsComponent implements OnInit, OnDestroy{
     )
   }
 
+  getProductByCategory(id: number){
+    this.masterService.getAllProductsByCategoryId(id).subscribe((res: APIResponseModel)=> {
+      this.productList.set(res.data)
+    })
+  }
+
   loadAllProducts(){
     this.subscribtionList.push(this.masterService.getAllProducts().subscribe((res: APIResponseModel) => {
       // this.productList = res.data

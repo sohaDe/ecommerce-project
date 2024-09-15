@@ -18,8 +18,13 @@ export class MasterService {
   }
 
   getAllCategory() : Observable<APIResponseModel>{
-    // we add return bs we will return response that we will get
-    console.log(this.http.get<APIResponseModel>(this.apiUrl + 'GetAllCategory'))
+    // old way for url this.apiUrl + 'GetAllCategory'
     return this.http.get<APIResponseModel>(this.apiUrl + 'GetAllCategory',)
   }
+
+  getAllProductsByCategoryId(categoryId: number) : Observable<APIResponseModel>{
+    // new way for url
+    const url = `${this.apiUrl}GetAllProductsByCategoryId?id=${categoryId}`
+    return this.http.get<APIResponseModel>(url)
+}
 }
