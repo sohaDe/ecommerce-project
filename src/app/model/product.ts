@@ -11,6 +11,31 @@ export interface Category{
   userId: number
 }
 
+// for register
+export class Customer{
+  custId: number
+  name: string
+  mobileNo: string
+  password: string
+
+  constructor(){
+    this.custId = 0
+    this.name= ''
+    this.mobileNo = ''
+    this.password = ''
+  }
+}
+
+export class Login{
+  userName: string
+  userPassword: string
+
+  constructor(){
+    this.userName= ''
+    this.userPassword = ''
+  }
+}
+
 export interface ProductList {
   productId: number
   productSku: string

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { APIResponseModel } from '../model/product';
+import { APIResponseModel, Customer, Login } from '../model/product';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +26,19 @@ export class MasterService {
     // new way for url
     const url = `${this.apiUrl}GetAllProductsByCategoryId?id=${categoryId}`
     return this.http.get<APIResponseModel>(url)
+}
+
+registerNewCustomer(obj: Customer) : Observable<APIResponseModel>{
+  // debugger
+  // new way for url
+  const url = `${this.apiUrl}RegisterCustomer`
+  return this.http.post<APIResponseModel>(url, obj)
+}
+
+loginCustomer(obj: Login) : Observable<APIResponseModel>{
+  // debugger
+  // new way for url
+  const url = `${this.apiUrl}Login`
+  return this.http.post<APIResponseModel>(url, obj)
 }
 }
