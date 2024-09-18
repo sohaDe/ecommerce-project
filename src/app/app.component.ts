@@ -1,14 +1,14 @@
 import { Component, ElementRef, inject, Inject, OnInit, ViewChild } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterLinkWithHref, RouterOutlet } from '@angular/router';
 import { ProductsComponent } from './pages/products/products.component';
-import { APIResponseModel, Customer, Login } from './model/product';
+import { APIResponseModel, CartData, Customer, Login } from './model/product';
 import { FormsModule } from '@angular/forms';
 import { MasterService } from './service/master.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,ProductsComponent,FormsModule],
+  imports: [RouterOutlet,ProductsComponent,FormsModule,RouterLink,RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -18,6 +18,8 @@ export class AppComponent implements OnInit{
   loginObj: Login = new Login()
 
   loggedUserData: Customer = new Customer()
+
+  cartData: CartData[] = []
 
   @ViewChild('registerModal') registerModal: ElementRef | undefined
   @ViewChild('loginModal') loginModal: ElementRef | undefined
@@ -29,7 +31,30 @@ export class AppComponent implements OnInit{
     if (isUser != null) {
       const parseObj = JSON.parse(isUser)
       this.loggedUserData = parseObj
+      this.getCartItems()
     }
+    this.masterService.onCartAdded.subscribe((res: boolean)=>{
+      if (res) {
+        this.getCartItems()
+      }
+    })
+  }
+
+  getCartItems(){
+    this.masterService.getCartProductsByCustomerId(this.loggedUserData.custId).subscribe((res: APIResponseModel)=>{
+      this.cartData = res.data
+    })
+  }
+
+  onDeleteProduct(cartId: number){
+    this.masterService.deleteProductFromCartById(cartId).subscribe((res: APIResponseModel) => {
+      if (res.result) {
+        alert("Product Removed From Cart")
+        this.getCartItems()
+      } else{
+        alert(res.message)
+      }
+    })
   }
 
   logout(){
@@ -42,7 +67,7 @@ export class AppComponent implements OnInit{
       this.registerModal.nativeElement.style.display = "block"
     }
   }
-  
+
   closeRegisterModal(){
     if (this.registerModal) {
       this.registerModal.nativeElement.style.display = "none"

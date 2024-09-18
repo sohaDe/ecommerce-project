@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { APIResponseModel, Customer, Login } from '../model/product';
+import { Observable, Subject } from 'rxjs';
+import { APIResponseModel, CartModel, Customer, Login, OrderModel } from '../model/product';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,16 @@ import { APIResponseModel, Customer, Login } from '../model/product';
 export class MasterService {
 
   apiUrl: string = '/api/BigBasket/'
-  constructor(private http: HttpClient) { }
+  loggedUserData : Customer = new Customer()
+
+  onCartAdded : Subject<boolean> = new Subject<boolean>
+  constructor(private http: HttpClient) {
+    const isUser = localStorage.getItem('ecom18')
+    if (isUser != null) {
+      const parseObj = JSON.parse(isUser)
+      this.loggedUserData = parseObj
+    }
+   }
 
   getAllProducts() : Observable<APIResponseModel>{
     // we add return bs we will return response that we will get
@@ -39,6 +48,29 @@ loginCustomer(obj: Login) : Observable<APIResponseModel>{
   // debugger
   // new way for url
   const url = `${this.apiUrl}Login`
+  return this.http.post<APIResponseModel>(url, obj)
+}
+
+addToCart(obj: CartModel) : Observable<APIResponseModel>{
+  // debugger
+  // new way for url
+  const url = `${this.apiUrl}AddToCart`
+  return this.http.post<APIResponseModel>(url, obj)
+}
+getCartProductsByCustomerId(loggedUserId: number) : Observable<APIResponseModel>{
+  const url = `${this.apiUrl}GetCartProductsByCustomerId?id=${loggedUserId}`
+  return this.http.get<APIResponseModel>(url)
+}
+
+deleteProductFromCartById(productId: number) : Observable<APIResponseModel>{
+  const url = `${this.apiUrl}DeleteProductFromCartById?id=${productId}`
+  return this.http.get<APIResponseModel>(url)
+}
+
+placeOrder(obj: OrderModel) : Observable<APIResponseModel>{
+  // debugger
+  // new way for url
+  const url = `${this.apiUrl}PlaceOrder`
   return this.http.post<APIResponseModel>(url, obj)
 }
 }

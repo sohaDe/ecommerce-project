@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MasterService } from '../../service/master.service';
-import { APIResponseModel, Category, ProductList } from '../../model/product';
+import { APIResponseModel, CartModel, Category, Customer, ProductList } from '../../model/product';
 import { map, Observable, Subscription } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
@@ -23,7 +23,9 @@ export class ProductsComponent implements OnInit, OnDestroy{
   subscribtionList: Subscription[] = []
 
   // masterService = Inject(MasterService)
-  constructor(private masterService: MasterService) {}
+  constructor(private masterService: MasterService) {
+
+  }
 
   ngOnInit() {
     this.loadAllProducts()
@@ -48,7 +50,20 @@ export class ProductsComponent implements OnInit, OnDestroy{
     }))
   }
 
-
+  onAddToCart(id: number){
+    const newObj : CartModel = new CartModel()
+    newObj.ProductId = id
+    newObj.CustId = this.masterService.loggedUserData.custId
+    this.masterService.addToCart(newObj).subscribe((res: APIResponseModel) => {
+      if (res.result) {
+        alert("Add To Cart Successfully")
+        this.masterService.onCartAdded.next(true)
+      }
+      else{
+        alert(res.message)
+      }
+    })
+  }
   ngOnDestroy() {
     this.subscribtionList.forEach(element => {
       element.unsubscribe()
